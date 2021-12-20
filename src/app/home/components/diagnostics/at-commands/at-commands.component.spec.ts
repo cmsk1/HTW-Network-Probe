@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChatComponent } from './chat.component';
+import { AtCommandsComponent } from './at-commands.component';
 
-describe('ChatComponent', () => {
-  let component: ChatComponent;
-  let fixture: ComponentFixture<ChatComponent>;
+describe('AtCommandsComponent', () => {
+  let component: AtCommandsComponent;
+  let fixture: ComponentFixture<AtCommandsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChatComponent ]
+      declarations: [ AtCommandsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChatComponent);
+    fixture = TestBed.createComponent(AtCommandsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
