@@ -1,0 +1,103 @@
+<app-navbar></app-navbar>
+
+<main>
+  <div class="row">
+    <div class="col-auto">
+      <div class="d-flex flex-column flex-shrink-0 p-3 bg-light side-nav">
+        <a  class="d-flex align-items-center mb-0 me-md-auto link-dark text-decoration-none">
+          <span class="fs-5">Start</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-3">
+          <li class="nav-item">
+            <a class="nav-link pointer" [ngClass]="tab === 'connect' ? 'active' : 'link-dark'" (click)="tab = 'connect'">
+              <span class="faFixedSize"><fa-icon [icon]="faEthernet"></fa-icon></span>
+              Verbindung
+            </a>
+          </li>
+        </ul>
+        <a class="d-flex align-items-center mb-0 me-md-auto link-dark text-decoration-none">
+          <span class="fs-5">Überwachung</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-3">
+          <li class="nav-item">
+            <a class="nav-link pointer"[ngClass]="tab === 'network' ? 'active' : 'link-dark'" (click)="tab = 'network'">
+              <span class="faFixedSize"><fa-icon [icon]="faSatelliteDish"></fa-icon></span>
+              Netzwerk
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer" [ngClass]="tab === 'internet' ? 'active' : 'link-dark'" (click)="tab = 'internet'">
+              <span class="faFixedSize"><fa-icon [icon]="faWifi"></fa-icon></span>
+              Internet
+            </a>
+          </li>
+        </ul>
+        <a class="d-flex align-items-center mb-0 me-md-auto link-dark text-decoration-none">
+          <span class="fs-5">Diagnose</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a class="nav-link pointer" [ngClass]="tab === 'device' ? 'active' : 'link-dark'" (click)="tab = 'device'">
+              <span class="faFixedSize"><fa-icon [icon]="faMicrochip"></fa-icon></span>
+              Gerät
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer" [ngClass]="tab === 'connection' ? 'active' : 'link-dark'" (click)="tab = 'connection'">
+              <span class="faFixedSize"><fa-icon [icon]="faEthernet"></fa-icon></span>
+              Verbindung
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer" [ngClass]="tab === 'sms' ? 'active' : 'link-dark'" (click)="tab = 'sms'">
+              <span class="faFixedSize"><fa-icon [icon]="faSms"></fa-icon></span>
+              SMS
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer disabled" [ngClass]="tab === 'sms' ? 'active' : 'link-dark'" (click)="tab = 'sms'">
+              <span class="faFixedSize"><fa-icon [icon]="faSms"></fa-icon></span>
+              Anruf
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer" [ngClass]="tab === 'phonebook' ? 'active' : 'link-dark'" (click)="tab = 'phonebook'">
+              <span class="faFixedSize"><fa-icon [icon]="faAddressBook"></fa-icon></span>
+              Telefonbuch
+            </a>
+          </li>
+          <li>
+            <a class="nav-link pointer" [ngClass]="tab === 'at' ? 'active' : 'link-dark'" (click)="tab = 'at'">
+              <span class="faFixedSize"><fa-icon [icon]="faTerminal" ></fa-icon></span>
+              AT Befehle
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <section>
+        <div class="row" style="font-size: 18px">
+          <div class="col-auto pe-5">Modul:<br>
+            <span class="fw-bold text-success">######</span>
+          </div>
+          <div class="col-auto pe-5">SIM:<br>
+            <span class="fw-bold text-success">Bereit</span>
+          </div>
+          <div class="col-auto pe-5">Signal:<br>
+            <span class="fw-bold text-success">-51db</span>
+          </div>
+        </div>
+        <hr>
+      </section>
+    </div>
+  </div>
+
+
+
+</main>
+
+
