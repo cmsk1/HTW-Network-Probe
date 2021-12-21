@@ -1,0 +1,31 @@
+<div class="p-3" >
+  <h4>Signalstärke:</h4>
+  <p-chart #chart type="line" [data]="basicData" [options]="basicOptions" [height]="'350px'" *ngIf="values"></p-chart>
+</div>
+
+<div class="p-3">
+  <p-table #dt [columns]="cols" [value]="dtValues" [scrollable]="true" [rows]="100" scrollHeight="350px"
+           [virtualScroll]="true" [virtualRowHeight]="40">
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex">
+        <button type="button" pButton pRipple icon="pi pi-file" (click)="dt.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+      <tr style="height:40px">
+        <td *ngFor="let col of columns">
+
+          <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
+          <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

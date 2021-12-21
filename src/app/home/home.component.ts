@@ -7,7 +7,8 @@ import {
   faSms,
   faTerminal,
   faWifi,
-  faPlay
+  faPlay,
+  faSimCard
 } from '@fortawesome/free-solid-svg-icons';
 import {SerPort} from '../shared/data/ser-port';
 import * as SerialPort from 'serialport';
@@ -17,6 +18,7 @@ import * as lodash from 'lodash';
 import {ElectronService} from '../core/services';
 import {ATI} from '../shared/data/ati';
 import {CSQ} from '../shared/data/csq';
+import {Sim} from '../shared/data/sim';
 
 @Component({
   selector: 'app-home',
@@ -33,11 +35,11 @@ export class HomeComponent implements OnInit {
   faTerminal = faTerminal;
   faAddressBook = faAddressBook;
   faPlay = faPlay;
+  faSimCard = faSimCard;
 
   tab: string;
-  simStatus = 'SIM not inserted';
-  deviceStatus = 'ready';
-  signal = -52;
+  netTab: string;
+  selectedSignalInterval = 5000;
 
   ports: SerPort[];
   lodash = lodash;
@@ -55,10 +57,12 @@ export class HomeComponent implements OnInit {
   atStatus: ATStatus;
 
   ati: ATI;
+  sim: Sim;
   csq: CSQ[];
 
   constructor(private electron: ElectronService, private changeDetection: ChangeDetectorRef) {
     this.tab = 'connect';
+    this.netTab = 'signal';
     this.rawData = [];
     this.analyseDataActive = false;
     this.checkCSQActive = false;
@@ -66,7 +70,7 @@ export class HomeComponent implements OnInit {
     this.csq = [];
     this.getAllPorts();
 
-    setInterval(() => this.checkCSQ(), 5000);
+    setInterval(() => this.checkCSQ(), this.selectedSignalInterval);
   }
 
   ngOnInit(): void {
@@ -117,6 +121,7 @@ export class HomeComponent implements OnInit {
     this.rawData = [];
     this.inputStringRaw = '';
     this.analyseDataActive = false;
+    this.checkCSQActive = false;
     this.ati = null;
     this.csq = [];
   }
@@ -177,6 +182,12 @@ export class HomeComponent implements OnInit {
         } else if (data.toString().trim().toUpperCase() !== this.lastCommand.toString().trim().toUpperCase()) {
           this.analyseData.push(new RawData(data.toString().trim(), true));
         }
+
+        if (data.includes('+CME ERROR:')) {
+          this.analyseDataActive = false;
+          this.atStatus = ATStatus.OK;
+          this.analyseDataFromArray();
+        }
       }
     }
     this.changeDetection.detectChanges();
@@ -186,8 +197,14 @@ export class HomeComponent implements OnInit {
     if (this.lastCommand === 'AT' && !this.ati) {
       this.serialWriteMessage('ATI');
     }
+    if (this.lastCommand === 'AT+CPIN?') {
+      this.sim = new Sim(this.analyseData);
+    }
     if (this.lastCommand === 'ATI') {
       this.ati = new ATI(this.analyseData);
+      if (!this.sim) {
+        this.tab = 'sim';
+      }
     }
     if (this.lastCommand === 'AT+CSQ') {
       this.csq.push(new CSQ(this.analyseData));

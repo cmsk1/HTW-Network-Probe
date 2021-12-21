@@ -15,6 +15,12 @@
               Verbindung
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'sim', 'disabled': !ati}" (click)="tab = 'sim'">
+              <span class="faFixedSize"><fa-icon [icon]="faSimCard"></fa-icon></span>
+              SIM
+            </a>
+          </li>
         </ul>
         <a class="d-flex align-items-center mb-0 me-md-auto link-dark text-decoration-none">
           <span class="fs-5">Überwachung</span>
@@ -22,14 +28,14 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-3">
           <li class="nav-item">
-            <a class="nav-link pointer" [ngClass]="tab === 'network' ? 'active' : 'link-dark'" (click)="tab = 'network'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'network', 'disabled': !ati}" (click)="tab = 'network'">
               <span class="faFixedSize"><fa-icon [icon]="faSatelliteDish"></fa-icon></span>
               Netzwerk
               <span class="float-end text-danger" *ngIf="checkCSQActive"><fa-icon [icon]="faPlay"></fa-icon></span>
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="tab === 'internet' ? 'active' : 'link-dark'" (click)="tab = 'internet'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'internet', 'disabled': !sim}" (click)="tab = 'internet'">
               <span class="faFixedSize"><fa-icon [icon]="faWifi"></fa-icon></span>
               Internet
             </a>
@@ -41,31 +47,31 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item">
-            <a class="nav-link pointer" [ngClass]="tab === 'device' ? 'active' : 'link-dark'" (click)="tab = 'device'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'device', 'disabled': !ati}" (click)="tab = 'device'">
               <span class="faFixedSize"><fa-icon [icon]="faMicrochip"></fa-icon></span>
               Gerät
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="tab === 'connection' ? 'active' : 'link-dark'" (click)="tab = 'connection'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'connection', 'disabled': !ati}" (click)="tab = 'connection'">
               <span class="faFixedSize"><fa-icon [icon]="faEthernet"></fa-icon></span>
               Verbindung
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="tab === 'sms' ? 'active' : 'link-dark'" (click)="tab = 'sms'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'sms', 'disabled': !sim}" (click)="tab = 'sms'">
               <span class="faFixedSize"><fa-icon [icon]="faSms"></fa-icon></span>
               SMS
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="tab === 'phonebook' ? 'active' : 'link-dark'" (click)="tab = 'phonebook'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'phonebook', 'disabled': !sim}" (click)="tab = 'phonebook'">
               <span class="faFixedSize"><fa-icon [icon]="faAddressBook"></fa-icon></span>
               Telefonbuch
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="tab === 'at' ? 'active' : 'link-dark'" (click)="tab = 'at'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'at', 'disabled': !ati}" (click)="tab = 'at'">
               <span class="faFixedSize"><fa-icon [icon]="faTerminal"></fa-icon></span>
               AT Befehle
             </a>
@@ -85,10 +91,13 @@
             <span class="fw-bold text-secondary" *ngIf="!ati">-</span>
           </div>
           <div class="col-auto pe-5">SIM:<br>
-            <span class="fw-bold text-success">Bereit</span>
+            <span class="fw-bold text-secondary" *ngIf="!sim">-</span>
+            <span class="fw-bold text-success" *ngIf="sim && !sim.error">{{sim.status}}</span>
+            <span class="fw-bold text-danger" *ngIf="sim && sim.error">{{sim.status}}</span>
           </div>
           <div class="col-auto pe-5">Signal:<br>
-            <span class="fw-bold text-success" *ngIf="csq && csq.length >= 1 && (csq[csq.length - 1].quality === 'Excellent' || csq[csq.length - 1].quality === 'Good')">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}})</span>
+            <span class="fw-bold text-success" *ngIf="csq && csq.length >= 1 && (csq[csq.length - 1].quality === 'Excellent' || csq[csq.length - 1].quality === 'Good')">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}}
+              )</span>
             <span class="fw-bold text-warning" *ngIf="csq && csq.length >= 1 && csq[csq.length - 1].quality === 'Ok'">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}})</span>
             <span class="fw-bold text-danger" *ngIf="csq && csq.length >= 1 && (csq[csq.length - 1].quality === 'Bad' || csq[csq.length - 1].quality === 'Very Bad')">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}})</span>
             <span class="fw-bold text-secondary" *ngIf="!csq || csq.length < 1">-</span>
@@ -153,14 +162,34 @@
             <div class="label">Modul</div>
             <div>{{ati.model}}</div>
           </div>
-          </div>
+        </div>
         <span *ngIf="!ati">Kein Modul verbunden</span>
       </section>
 
       <section *ngIf="tab === 'network'">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="checkCSQActive" [(ngModel)]="checkCSQActive">
-          <label class="form-check-label" for="checkCSQActive">Signalstärke überwachen</label>
+        <div class="row">
+          <div class="col-auto">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="checkCSQActive" [(ngModel)]="checkCSQActive">
+              <label class="form-check-label" for="checkCSQActive">Signalstärke überwachen</label>
+            </div>
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs py-3">
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active border-shadow-top': netTab === 'signal'}" (click)="netTab = 'signal'">Signalstärke</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active border-shadow-top': netTab === 'networks', 'disabled' : !sim}" (click)="netTab = 'networks'">Verfügbare Netze</a>
+          </li>
+        </ul>
+        <app-signal-quality-chart [values]="csq" *ngIf="netTab === 'signal'"></app-signal-quality-chart>
+      </section>
+
+      <section *ngIf="tab === 'sim'">
+        <div class="mb-3">
+          <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+CPIN?')">SIM Prüfen</button>
         </div>
       </section>
 

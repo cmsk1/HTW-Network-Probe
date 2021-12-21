@@ -106,3 +106,20 @@ main {
   color: #76B900 !important;
   font-weight: bold;
 }
+
+.border-shadow-top {
+  box-shadow: inset 0px 33px 2px -30px #495057;
+}
+
+
+.nav-pills a.nav-link {
+  color: #252525 !important;
+}
+
+.nav-pills a.active {
+  color: white !important;
+}
+
+.nav-pills a.nav-link.disabled {
+  color: #9b9b9b !important;
+}

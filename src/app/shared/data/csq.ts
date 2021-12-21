@@ -5,12 +5,14 @@ export class CSQ {
   dbm: number;
   rxqual: number;
   quality: string;
+  date: Date;
 
   constructor(raw: RawData[]) {
     for (const rawItem of raw) {
       this.rssi = parseFloat(rawItem.data.replace('+CSQ: ', '').split(',')[0].trim());
       this.rxqual = parseFloat(rawItem.data.replace('+CSQ: ', '').split(',')[1].trim());
       this.rssiToDbm();
+      this.date = new Date();
     }
   }
 
