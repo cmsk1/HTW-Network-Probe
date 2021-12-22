@@ -23,6 +23,10 @@ import {CSQ} from '../shared/data/csq';
 import {Sim} from '../shared/data/sim';
 import {Cbc} from '../shared/data/cbc';
 import {Temp} from '../shared/data/temp';
+import {COPS} from '../shared/data/cops';
+import {COPSC} from '../shared/data/copsc';
+import {AvailableNetwork} from '../shared/data/available-network';
+import {CFUN} from '../shared/data/cfun';
 
 @Component({
   selector: 'app-home',
@@ -52,10 +56,12 @@ export class HomeComponent implements OnInit {
   analyseData: RawData[];
   analyseDataActive: boolean;
   checkCSQActive: boolean;
+  checkCPSIActive: boolean;
   inputStringRaw: string;
   selectedPortId: string;
   lastCommand: string;
   connected: string;
+  selectedCFUN = 1;
   selectedPort: SerPort;
   serialPort: SerialPort;
   parser: SerialPort.parsers.Delimiter;
@@ -65,6 +71,9 @@ export class HomeComponent implements OnInit {
   sim: Sim;
   cbc: Cbc;
   temp: Temp;
+  cops: COPS;
+  cfun: CFUN;
+  currentCop: COPSC;
   csq: CSQ[];
 
   constructor(private electron: ElectronService, private changeDetection: ChangeDetectorRef) {
@@ -72,6 +81,7 @@ export class HomeComponent implements OnInit {
     this.netTab = 'signal';
     this.rawData = [];
     this.analyseDataActive = false;
+    this.checkCPSIActive = false;
     this.checkCSQActive = false;
     this.connected = 'NOT_CONNECTED';
     this.csq = [];
@@ -128,6 +138,7 @@ export class HomeComponent implements OnInit {
     this.rawData = [];
     this.inputStringRaw = '';
     this.analyseDataActive = false;
+    this.checkCPSIActive = false;
     this.checkCSQActive = false;
     this.ati = null;
     this.csq = [];
@@ -160,6 +171,7 @@ export class HomeComponent implements OnInit {
     this.lastCommand = text.toString().trim();
     text = text.trim() + '\r\n';
     const self = this;
+    this.atStatus = ATStatus.WAITING;
     this.rawData.push(new RawData(text, true));
     setTimeout(() => {
         this.changeDetection.detectChanges();
@@ -178,7 +190,6 @@ export class HomeComponent implements OnInit {
     if (data && data.length > 0) {
       if (data.toString().trim().toUpperCase() === this.lastCommand.trim().toUpperCase() && !this.analyseDataActive) {
         this.analyseDataActive = true;
-        this.atStatus = ATStatus.WAITING;
         this.analyseData = [];
       }
       if (this.analyseDataActive) {
@@ -218,6 +229,24 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'AT+CPMUTEMP') {
       this.temp = new Temp(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+CFUN?') {
+      this.cfun = new CFUN(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+COPS=?') {
+      this.cops = new COPS(this.analyseData);
+      this.serialWriteMessage('AT+COPS?');
+    }
+    if (this.lastCommand === 'AT+COPS?' && this.cops) {
+      if (this.analyseData[0].data.toString().trim() !== '+COPS: 0') {
+        const currentCop = new COPSC(this.analyseData);
+        const current: AvailableNetwork = this.cops.networks.filter(n => n.id === currentCop.id)[0];
+        if (current != null) {
+          currentCop.name = current.name;
+          currentCop.operator = current.operator;
+          this.currentCop = currentCop;
+        }
+      }
     }
   }
 

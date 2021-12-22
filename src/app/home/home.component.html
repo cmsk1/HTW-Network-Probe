@@ -30,14 +30,14 @@
           <li class="nav-item">
             <a class="nav-link pointer" [ngClass]="{'active': tab === 'network', 'disabled': !ati}" (click)="tab = 'network'">
               <span class="faFixedSize"><fa-icon [icon]="faSatelliteDish"></fa-icon></span>
-              Netzwerk
+              Signal
               <span class="float-end text-danger" *ngIf="checkCSQActive"><fa-icon [icon]="faPlay"></fa-icon></span>
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="{'active': tab === 'internet', 'disabled': !sim}" (click)="tab = 'internet'">
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'provider', 'disabled': !sim || sim.error}" (click)="tab = 'provider'">
               <span class="faFixedSize"><fa-icon [icon]="faWifi"></fa-icon></span>
-              Internet
+              Netzwerk
             </a>
           </li>
         </ul>
@@ -53,21 +53,15 @@
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="{'active': tab === 'connection', 'disabled': !ati}" (click)="tab = 'connection'">
-              <span class="faFixedSize"><fa-icon [icon]="faEthernet"></fa-icon></span>
-              Verbindung
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'availableNetworks', 'disabled': !ati}" (click)="tab = 'availableNetworks'">
+              <span class="faFixedSize"><fa-icon [icon]="faSatelliteDish"></fa-icon></span>
+              Verfügbare Netze
             </a>
           </li>
           <li>
-            <a class="nav-link pointer" [ngClass]="{'active': tab === 'sms', 'disabled': !sim}" (click)="tab = 'sms'">
-              <span class="faFixedSize"><fa-icon [icon]="faSms"></fa-icon></span>
-              SMS
-            </a>
-          </li>
-          <li>
-            <a class="nav-link pointer" [ngClass]="{'active': tab === 'phonebook', 'disabled': !sim}" (click)="tab = 'phonebook'">
-              <span class="faFixedSize"><fa-icon [icon]="faAddressBook"></fa-icon></span>
-              Telefonbuch
+            <a class="nav-link pointer" [ngClass]="{'active': tab === 'simInfo', 'disabled': !sim || sim.error}" (click)="tab = 'simInfo'">
+              <span class="faFixedSize"><fa-icon [icon]="faSimCard"></fa-icon></span>
+              SIM
             </a>
           </li>
           <li>
@@ -176,21 +170,35 @@
           </div>
         </div>
 
-        <ul class="nav nav-tabs py-3">
-          <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active border-shadow-top': netTab === 'signal'}" (click)="netTab = 'signal'">Signalstärke</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active border-shadow-top': netTab === 'networks', 'disabled' : !sim}" (click)="netTab = 'networks'">Verfügbare Netze</a>
-          </li>
-        </ul>
+        <app-signal-quality-chart [values]="csq" *ngIf="netTab === 'signal'"></app-signal-quality-chart>
+      </section>
+      <section *ngIf="tab === 'provider'">
+        <div class="row">
+          <div class="col-auto">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="checkCPSIActive" [(ngModel)]="checkCPSIActive">
+              <label class="form-check-label" for="checkCSQActive">Netzwerk überwachen</label>
+            </div>
+          </div>
+        </div>
+
         <app-signal-quality-chart [values]="csq" *ngIf="netTab === 'signal'"></app-signal-quality-chart>
       </section>
 
       <section *ngIf="tab === 'sim'">
         <div class="mb-3">
-          <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+CPIN?')">SIM Prüfen</button>
+          <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+CPIN?')"  [disabled]="atStatus !== 'OK'">SIM Prüfen</button>
         </div>
+      </section>
+
+      <section *ngIf="tab === 'availableNetworks'">
+        <div class="mb-3">
+          <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+COPS=?')" [disabled]="atStatus !== 'OK'">Netzdaten aktualisieren</button>
+          <div class="spinner-border spinner-border-sm ms-3" role="status" *ngIf="atStatus !== 'OK'">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <app-available-networks-table [values]="cops" [current]="currentCop"></app-available-networks-table>
       </section>
 
       <section *ngIf="tab === 'device'">
@@ -199,7 +207,7 @@
             <div class="col-12">
               <h5>Hardware:</h5>
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3">
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">Modul:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="ati = null; serialWriteMessage('ATI')"></fa-icon>
@@ -217,7 +225,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3">
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">Sensor:&emsp;</h5>
@@ -227,6 +235,32 @@
                       <span class="label">Temperatur:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="temp = null; serialWriteMessage('AT+CPMUTEMP')"></fa-icon></span><br>
                       <span *ngIf="temp">{{temp.info}} °C</span>
                       <span *ngIf="!temp">- °C</span><br>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Status:&emsp;</h5>
+                      <span class="label">Aktuelles Funktionslevel:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="cbc = null; serialWriteMessage('AT+CFUN?')"></fa-icon></span><br>
+                      <span *ngIf="cfun && cfun.level === 0">0 - Minimum functionality</span>
+                      <span *ngIf="cfun && cfun.level === 1">1 - Full functionality, online mode</span>
+                      <span *ngIf="cfun && cfun.level === 2">4 - Transmit and receive RF circuits disabled</span>
+                      <span *ngIf="cfun && cfun.level === 3">5 - Factory Test Mode</span>
+                      <span *ngIf="cfun && cfun.level === 4">6 - Reset</span>
+                      <span *ngIf="cfun && cfun.level === 5">7 - Offline Mode</span>
+                      <span *ngIf="!cfun">-</span><br>
+                      <span class="label">Level ändern</span><br>
+                      <div class="input-group input-group-sm">
+                        <select class="form-select form-select-sm" [(ngModel)]="selectedCFUN">
+                          <option [value]="0">0 - Minimum functionality</option>
+                          <option [value]="1">1 - Full functionality, online mode</option>
+                          <option [value]="4">4 - Transmit and receive RF circuits disabled</option>
+                          <option [value]="5">5 - Factory Test Mode</option>
+                          <option [value]="7">7 - Offline Mode</option>
+                        </select>
+                        <button class="btn btn-sm btn-success" (click)="serialWriteMessage('AT+CFUN='+selectedCFUN)">Update</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -241,8 +275,8 @@
           <div class="row">
             <div class="col-12">
               <h5>Konsole:</h5>
-              <div class="overflow-auto border rounded w-100 mb-3 p-3" style="height: 500px">
-                <pre class="d-block m-0" style="overflow-x: hidden" [ngClass]="{'green-text': rawItem.isSend}" *ngFor="let rawItem of rawData"><span>{{rawItem.date | date:'dd.MM.yy HH:mm:ss'}}</span> - {{rawItem.data}}</pre>
+              <div class="overflow-auto border rounded w-100 mb-3 p-3 text-break" style="height: 500px">
+                <pre class="d-block m-0 text-break" style="overflow-x: hidden; max-width: 1000px;" [ngClass]="{'green-text': rawItem.isSend}" *ngFor="let rawItem of rawData"><span>{{rawItem.date | date:'dd.MM.yy HH:mm:ss'}}</span> - {{rawItem.data}}</pre>
               </div>
               <div class="row">
                 <div class="col-12">

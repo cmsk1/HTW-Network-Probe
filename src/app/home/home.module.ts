@@ -5,9 +5,7 @@ import {HomeRoutingModule} from './home-routing.module';
 
 import {HomeComponent} from './home.component';
 import {SharedModule} from '../shared/shared.module';
-import {DeviceComponent} from './components/diagnostics/device/device.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {AtCommandsComponent} from './components/diagnostics/at-commands/at-commands.component';
 import {
   SignalQualityChartComponent
 } from './components/monitoring/charts/signal-quality-chart/signal-quality-chart.component';
@@ -16,9 +14,10 @@ import {TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from 'primeng/ripple';
 import {TooltipModule} from 'primeng/tooltip';
+import { AvailableNetworksTableComponent } from './components/diagnostics/available-networks-table/available-networks-table.component';
 
 @NgModule({
-  declarations: [HomeComponent, DeviceComponent, AtCommandsComponent, SignalQualityChartComponent],
+  declarations: [HomeComponent, SignalQualityChartComponent, AvailableNetworksTableComponent],
   imports: [CommonModule, SharedModule, HomeRoutingModule, FontAwesomeModule, ChartModule, TableModule, ButtonModule, RippleModule, TooltipModule]
 })
 export class HomeModule {

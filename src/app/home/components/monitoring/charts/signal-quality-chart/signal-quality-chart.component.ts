@@ -43,7 +43,7 @@ export class SignalQualityChartComponent implements OnInit {
       labels: this.values.map((a, index) => index).slice(-70),
       datasets: [
         {
-          label: 'Qualität in dBm (niedriger ist besser)',
+          label: 'Qualität in dBm (höher ist besser)',
           data: this.values.map(a => a.dbm).slice(-70),
           fill: false,
           borderColor: '#e30000',

@@ -1,0 +1,72 @@
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Aktuelles Netz:&emsp;</h5>
+      <ng-container *ngIf="current">
+        <span class="label">Netz-ID:</span><br>
+        <span>{{current.id}}</span><br>
+        <span class="label">Name:</span><br>
+        <span>{{current.name}}</span><br>
+        <span class="label">Bezeichnung:</span><br>
+        <span>{{current.operator}}</span><br>
+        <span class="label">Status:</span><br>
+        <span *ngIf="current.stat === 0">Unknown</span><br>
+        <span *ngIf="current.stat === 1">Available</span><br>
+        <span *ngIf="current.stat === 2">Current</span><br>
+        <span *ngIf="current.stat === 3">Forbidden</span><br>
+        <span class="label">Technologie:</span><br>
+        <span *ngIf="current.technology === 0">GSM</span><br>
+        <span *ngIf="current.technology === 1">GSM Compact</span><br>
+        <span *ngIf="current.technology === 2">UTRAN</span><br>
+        <span *ngIf="current.technology === 3">GSM w/EGPRS</span><br>
+        <span *ngIf="current.technology === 4">UTRAN w/HSDPA</span><br>
+        <span *ngIf="current.technology === 5">UTRAN w/HSUPA</span><br>
+        <span *ngIf="current.technology === 6">UTRAN w/HSDPA and HSUPA</span><br>
+        <span *ngIf="current.technology === 7">EUTRAN</span><br>
+        <span *ngIf="current.technology === 8">UTRAN HSPA+</span><br>
+        <span class="label">Modus:</span><br>
+        <span>{{current.mode}}</span><br>
+      </ng-container>
+      <ng-container *ngIf="!current">
+        <p class="text-danger">Nicht verbunden</p>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<hr>
+<h5>Verfügbare Netze</h5>
+<table class="table table-striped" *ngIf="values && values.networks">
+  <thead>
+  <tr>
+    <th scope="col">Netz-ID</th>
+    <th scope="col">Name</th>
+    <th scope="col">Bezeichnung</th>
+    <th scope="col">Status</th>
+    <th scope="col">Technologie</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let val of values.networks">
+    <td>{{val.id}}</td>
+    <td>{{val.name}}</td>
+    <td>{{val.operator}}</td>
+    <td>
+      <span *ngIf="val.stat === 0">0 - unknown</span>
+      <span *ngIf="val.stat === 1">1 - available</span>
+      <span *ngIf="val.stat === 2">2 - current</span>
+      <span *ngIf="val.stat === 3">3 - forbidden</span>
+    </td>
+    <td>
+      <span *ngIf="val.technology === 0">0 - GSM</span>
+      <span *ngIf="val.technology === 1">1 - GSM Compact</span>
+      <span *ngIf="val.technology === 2">2 - UTRAN</span>
+      <span *ngIf="val.technology === 3">3 - GSM w/EGPRS</span>
+      <span *ngIf="val.technology === 4">4 - UTRAN w/HSDPA</span>
+      <span *ngIf="val.technology === 5">5 - UTRAN w/HSUPA</span>
+      <span *ngIf="val.technology === 6">6 - UTRAN w/HSDPA and HSUPA</span>
+      <span *ngIf="val.technology === 7">7 - EUTRAN</span>
+      <span *ngIf="val.technology === 8">8 - UTRAN HSPA+</span>
+    </td>
+  </tr>
+  </tbody>
+</table>
