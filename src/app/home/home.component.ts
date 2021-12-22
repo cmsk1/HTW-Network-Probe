@@ -27,6 +27,7 @@ import {COPS} from '../shared/data/cops';
 import {COPSC} from '../shared/data/copsc';
 import {AvailableNetwork} from '../shared/data/available-network';
 import {CFUN} from '../shared/data/cfun';
+import {CGREG} from '../shared/data/cgreg';
 
 @Component({
   selector: 'app-home',
@@ -62,6 +63,7 @@ export class HomeComponent implements OnInit {
   lastCommand: string;
   connected: string;
   selectedCFUN = 1;
+  selectedPIN = '0000';
   selectedPort: SerPort;
   serialPort: SerialPort;
   parser: SerialPort.parsers.Delimiter;
@@ -73,6 +75,7 @@ export class HomeComponent implements OnInit {
   temp: Temp;
   cops: COPS;
   cfun: CFUN;
+  cgreg: CGREG;
   currentCop: COPSC;
   csq: CSQ[];
 
@@ -217,9 +220,17 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'AT+CPIN?') {
       this.sim = new Sim(this.analyseData);
+      if (this.sim.status === 'READY') {
+        this.delay(2000).then(() =>
+          this.serialWriteMessage('AT+CGREG?')
+        );
+      }
     }
     if (this.lastCommand === 'ATI') {
       this.ati = new ATI(this.analyseData);
+      this.delay(1000).then(() =>
+        this.serialWriteMessage('AT+CPIN?')
+      );
     }
     if (this.lastCommand === 'AT+CSQ') {
       this.csq.push(new CSQ(this.analyseData));
@@ -235,7 +246,12 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'AT+COPS=?') {
       this.cops = new COPS(this.analyseData);
-      this.serialWriteMessage('AT+COPS?');
+      this.delay(1000).then(() =>
+        this.serialWriteMessage('AT+COPS?')
+      );
+    }
+    if (this.lastCommand === 'AT+CGREG?') {
+      this.cgreg = new CGREG(this.analyseData);
     }
     if (this.lastCommand === 'AT+COPS?' && this.cops) {
       if (this.analyseData[0].data.toString().trim() !== '+COPS: 0') {
@@ -254,6 +270,15 @@ export class HomeComponent implements OnInit {
     if (this.ati && this.atStatus === ATStatus.OK && !this.analyseDataActive && this.checkCSQActive) {
       this.serialWriteMessage('AT+CSQ');
     }
+  }
+
+  enterPIN() {
+    this.selectedPIN = this.selectedPIN.replace(/\D/g, '');
+    this.serialWriteMessage('AT+CPIN=' + this.selectedPIN.trim());
+    this.delay(1000).then(r =>
+      this.serialWriteMessage('AT+CPIN?')
+    );
+
   }
 
   delay(ms: number) {

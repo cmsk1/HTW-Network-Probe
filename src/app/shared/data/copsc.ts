@@ -11,7 +11,7 @@ export class COPSC {
   constructor(raw: RawData[]) {
     for (const rawItem of raw) {
       if (rawItem.data.includes('+COPS:')) {
-        const tmp = rawItem.data.replace('+COPS: ', '').replace('"', '').trim();
+        const tmp = rawItem.data.replace('+COPS: ', '').trim();
         const split = tmp.split(',');
         this.mode = Number(split[0]);
         this.stat = Number(split[1]);
