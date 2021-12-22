@@ -1,14 +1,16 @@
+/* eslint-disable space-before-function-paren */
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {
   faAddressBook,
   faEthernet,
   faMicrochip,
-  faSatelliteDish,
-  faSms,
-  faTerminal,
-  faWifi,
   faPlay,
-  faSimCard
+  faSatelliteDish,
+  faSimCard,
+  faSms,
+  faSync,
+  faTerminal,
+  faWifi
 } from '@fortawesome/free-solid-svg-icons';
 import {SerPort} from '../shared/data/ser-port';
 import * as SerialPort from 'serialport';
@@ -19,6 +21,8 @@ import {ElectronService} from '../core/services';
 import {ATI} from '../shared/data/ati';
 import {CSQ} from '../shared/data/csq';
 import {Sim} from '../shared/data/sim';
+import {Cbc} from '../shared/data/cbc';
+import {Temp} from '../shared/data/temp';
 
 @Component({
   selector: 'app-home',
@@ -36,6 +40,7 @@ export class HomeComponent implements OnInit {
   faAddressBook = faAddressBook;
   faPlay = faPlay;
   faSimCard = faSimCard;
+  faSync = faSync;
 
   tab: string;
   netTab: string;
@@ -58,6 +63,8 @@ export class HomeComponent implements OnInit {
 
   ati: ATI;
   sim: Sim;
+  cbc: Cbc;
+  temp: Temp;
   csq: CSQ[];
 
   constructor(private electron: ElectronService, private changeDetection: ChangeDetectorRef) {
@@ -202,12 +209,15 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'ATI') {
       this.ati = new ATI(this.analyseData);
-      if (!this.sim) {
-        this.tab = 'sim';
-      }
     }
     if (this.lastCommand === 'AT+CSQ') {
       this.csq.push(new CSQ(this.analyseData));
+    }
+    if (this.lastCommand === 'AT+CBC') {
+      this.cbc = new Cbc(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+CPMUTEMP') {
+      this.temp = new Temp(this.analyseData);
     }
   }
 
@@ -217,4 +227,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }

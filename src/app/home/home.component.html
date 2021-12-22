@@ -49,7 +49,7 @@
           <li class="nav-item">
             <a class="nav-link pointer" [ngClass]="{'active': tab === 'device', 'disabled': !ati}" (click)="tab = 'device'">
               <span class="faFixedSize"><fa-icon [icon]="faMicrochip"></fa-icon></span>
-              Gerät
+              Hardware
             </a>
           </li>
           <li>
@@ -82,7 +82,7 @@
     <div class="col">
       <section class="mt-2">
         <div class="row" style="font-size: 18px">
-          <div class="col-auto pe-5">COM:<br>
+          <div class="col-auto pe-5">Port:<br>
             <span class="fw-bold text-primary" *ngIf="selectedPort">{{selectedPort.comName}}</span>
             <span class="fw-bold text-secondary" *ngIf="!selectedPort">-</span>
           </div>
@@ -190,6 +190,49 @@
       <section *ngIf="tab === 'sim'">
         <div class="mb-3">
           <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+CPIN?')">SIM Prüfen</button>
+        </div>
+      </section>
+
+      <section *ngIf="tab === 'device'">
+        <div class="mb-3">
+          <div class="row">
+            <div class="col-12">
+              <h5>Hardware:</h5>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Modul:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="ati = null; serialWriteMessage('ATI')"></fa-icon>
+                      </h5>
+                      <span class="label">Hersteller:</span><br>
+                      <span *ngIf="ati">{{ati.manufacturer}}</span><br>
+                      <span class="label">Model:</span><br>
+                      <span *ngIf="ati">{{ati.model}}</span><br>
+                      <span class="label">Revision:</span><br>
+                      <span *ngIf="ati">{{ati.revision}}</span><br>
+                      <span class="label">IMEI:</span><br>
+                      <span *ngIf="ati">{{ati.imei}}</span><br>
+                      <span class="label">Fähigkeiten:</span><br>
+                      <span *ngIf="ati">{{ati.flags}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Sensor:&emsp;</h5>
+                      <span class="label">Spannungsversorgung:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="cbc = null; serialWriteMessage('AT+CBC')"></fa-icon></span><br>
+                      <span *ngIf="cbc">{{cbc.info}}</span>
+                      <span *ngIf="!cbc">-</span><br>
+                      <span class="label">Temperatur:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="temp = null; serialWriteMessage('AT+CPMUTEMP')"></fa-icon></span><br>
+                      <span *ngIf="temp">{{temp.info}} °C</span>
+                      <span *ngIf="!temp">- °C</span><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

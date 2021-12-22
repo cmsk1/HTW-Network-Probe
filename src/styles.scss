@@ -1,9 +1,33 @@
 @import "~bootstrap/dist/css/bootstrap.css";
 
-.active{
+.active {
   font-weight: bold;
 }
-.label{
+
+.label {
   font-size: smaller;
   color: gray;
+}
+
+.cs-btn-hover-grow-effect {
+  transition: all 90ms;
+}
+
+.cs-btn-hover-grow-effect:hover {
+  transform: scale(1.25);
+  transform-origin: center;
+  cursor: pointer;
+  filter: brightness(65%);
+}
+
+.cs-btn-hover-grow-effect_2 {
+  transition: all 90ms;
+  transform: scale(1.35);
+}
+
+.cs-btn-hover-grow-effect_2:hover {
+  transform: scale(1.7);
+  transform-origin: center;
+  cursor: pointer;
+  filter: brightness(65%);
 }

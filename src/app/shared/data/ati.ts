@@ -18,7 +18,7 @@ export class ATI {
       } else if (rawItem.data.includes('IMEI:')) {
         this.imei = rawItem.data.replace('IMEI: ', '').trim();
       } else {
-        this.imei = rawItem.data.trim();
+        this.flags = rawItem.data.trim();
       }
     }
   }
