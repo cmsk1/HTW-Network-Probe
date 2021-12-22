@@ -25,8 +25,8 @@ export class SignalQualityChartComponent implements OnInit {
     {field: 'quality', header: 'Qualität'},
     {field: 'rxqual', header: 'RXQUAL'}
   ];
-  constructor() {
 
+  constructor() {
   }
 
   ngOnInit(): void {

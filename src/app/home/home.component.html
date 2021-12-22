@@ -38,6 +38,7 @@
             <a class="nav-link pointer" [ngClass]="{'active': tab === 'provider', 'disabled': !sim || sim.error}" (click)="tab = 'provider'">
               <span class="faFixedSize"><fa-icon [icon]="faWifi"></fa-icon></span>
               Netzwerk
+              <span class="float-end text-danger" *ngIf="checkCPSIActive"><fa-icon [icon]="faPlay"></fa-icon></span>
             </a>
           </li>
         </ul>
@@ -182,7 +183,7 @@
           </div>
         </div>
 
-        <app-signal-quality-chart [values]="csq" *ngIf="netTab === 'signal'"></app-signal-quality-chart>
+        <app-network [values]="cpsi" [active]="checkCPSIActive"></app-network>
       </section>
 
       <section *ngIf="tab === 'sim'">

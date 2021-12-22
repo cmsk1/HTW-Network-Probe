@@ -28,6 +28,11 @@ import {COPSC} from '../shared/data/copsc';
 import {AvailableNetwork} from '../shared/data/available-network';
 import {CFUN} from '../shared/data/cfun';
 import {CGREG} from '../shared/data/cgreg';
+import {CPSI} from '../shared/data/cpsi';
+import {CPSIGSM} from '../shared/data/cpsi-gsm';
+import {CPSILTE} from "../shared/data/cpsi-lte";
+import {CPSIWCDMA} from "../shared/data/cpsi-wcdma";
+import {CPSINOSERVICE} from "../shared/data/cpsi-noservice";
 
 @Component({
   selector: 'app-home',
@@ -78,6 +83,7 @@ export class HomeComponent implements OnInit {
   cgreg: CGREG;
   currentCop: COPSC;
   csq: CSQ[];
+  cpsi: any[];
 
   constructor(private electron: ElectronService, private changeDetection: ChangeDetectorRef) {
     this.tab = 'connect';
@@ -88,9 +94,13 @@ export class HomeComponent implements OnInit {
     this.checkCSQActive = false;
     this.connected = 'NOT_CONNECTED';
     this.csq = [];
+    this.cpsi = [];
     this.getAllPorts();
 
     setInterval(() => this.checkCSQ(), this.selectedSignalInterval);
+    this.delay(1200).then(r =>
+      setInterval(() => this.checkCPSI(), this.selectedSignalInterval)
+    );
   }
 
   ngOnInit(): void {
@@ -144,7 +154,6 @@ export class HomeComponent implements OnInit {
     this.checkCPSIActive = false;
     this.checkCSQActive = false;
     this.ati = null;
-    this.csq = [];
   }
 
   getAllPorts() {
@@ -244,6 +253,20 @@ export class HomeComponent implements OnInit {
     if (this.lastCommand === 'AT+CFUN?') {
       this.cfun = new CFUN(this.analyseData);
     }
+    if (this.lastCommand === 'AT+CPSI?') {
+      const split = this.analyseData[0].data.replace('+CPSI: ', '').trim().split(',');
+      if (split[0]) {
+        if (split[0].includes('LTE')) {
+          this.cpsi.push(new CPSILTE(this.analyseData));
+        } else if (split[0].includes('GSM')) {
+          this.cpsi.push(new CPSIGSM(this.analyseData));
+        } else if (split[0].includes('WCDMA')) {
+          this.cpsi.push(new CPSIWCDMA(this.analyseData));
+        } else if (split[0].includes('NO SERVICE')) {
+          this.cpsi.push(new CPSINOSERVICE(this.analyseData));
+        }
+      }
+    }
     if (this.lastCommand === 'AT+COPS=?') {
       this.cops = new COPS(this.analyseData);
       this.delay(1000).then(() =>
@@ -269,6 +292,20 @@ export class HomeComponent implements OnInit {
   checkCSQ() {
     if (this.ati && this.atStatus === ATStatus.OK && !this.analyseDataActive && this.checkCSQActive) {
       this.serialWriteMessage('AT+CSQ');
+    } else if (this.ati && this.atStatus === ATStatus.WAITING && !this.analyseDataActive && this.checkCSQActive) {
+      this.delay(1000).then(r =>
+        this.serialWriteMessage('AT+CSQ')
+      );
+    }
+  }
+
+  checkCPSI() {
+    if (this.ati && this.atStatus === ATStatus.OK && !this.analyseDataActive && this.checkCPSIActive) {
+      this.serialWriteMessage('AT+CPSI?');
+    } else if (this.ati && this.atStatus === ATStatus.WAITING && !this.analyseDataActive && this.checkCPSIActive) {
+      this.delay(1000).then(r =>
+        this.serialWriteMessage('AT+CPSI?')
+      );
     }
   }
 
