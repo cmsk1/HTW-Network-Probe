@@ -28,11 +28,10 @@ import {COPSC} from '../shared/data/copsc';
 import {AvailableNetwork} from '../shared/data/available-network';
 import {CFUN} from '../shared/data/cfun';
 import {CGREG} from '../shared/data/cgreg';
-import {CPSI} from '../shared/data/cpsi';
 import {CPSIGSM} from '../shared/data/cpsi-gsm';
-import {CPSILTE} from "../shared/data/cpsi-lte";
-import {CPSIWCDMA} from "../shared/data/cpsi-wcdma";
-import {CPSINOSERVICE} from "../shared/data/cpsi-noservice";
+import {CPSILTE} from '../shared/data/cpsi-lte';
+import {CPSIWCDMA} from '../shared/data/cpsi-wcdma';
+import {CPSINOSERVICE} from '../shared/data/cpsi-noservice';
 
 @Component({
   selector: 'app-home',
@@ -67,6 +66,7 @@ export class HomeComponent implements OnInit {
   selectedPortId: string;
   lastCommand: string;
   connected: string;
+  registerString: string;
   selectedCFUN = 1;
   selectedPIN = '0000';
   selectedPort: SerPort;
@@ -88,6 +88,7 @@ export class HomeComponent implements OnInit {
   constructor(private electron: ElectronService, private changeDetection: ChangeDetectorRef) {
     this.tab = 'connect';
     this.netTab = 'signal';
+    this.registerString = '';
     this.rawData = [];
     this.analyseDataActive = false;
     this.checkCPSIActive = false;
@@ -154,6 +155,7 @@ export class HomeComponent implements OnInit {
     this.checkCPSIActive = false;
     this.checkCSQActive = false;
     this.ati = null;
+    this.sim = null;
   }
 
   getAllPorts() {
@@ -262,7 +264,7 @@ export class HomeComponent implements OnInit {
           this.cpsi.push(new CPSIGSM(this.analyseData));
         } else if (split[0].includes('WCDMA')) {
           this.cpsi.push(new CPSIWCDMA(this.analyseData));
-        } else if (split[0].includes('NO SERVICE')) {
+        } else if (split[0].toUpperCase().includes('NO SERVICE')) {
           this.cpsi.push(new CPSINOSERVICE(this.analyseData));
         }
       }
@@ -292,20 +294,12 @@ export class HomeComponent implements OnInit {
   checkCSQ() {
     if (this.ati && this.atStatus === ATStatus.OK && !this.analyseDataActive && this.checkCSQActive) {
       this.serialWriteMessage('AT+CSQ');
-    } else if (this.ati && this.atStatus === ATStatus.WAITING && !this.analyseDataActive && this.checkCSQActive) {
-      this.delay(1000).then(r =>
-        this.serialWriteMessage('AT+CSQ')
-      );
     }
   }
 
   checkCPSI() {
     if (this.ati && this.atStatus === ATStatus.OK && !this.analyseDataActive && this.checkCPSIActive) {
       this.serialWriteMessage('AT+CPSI?');
-    } else if (this.ati && this.atStatus === ATStatus.WAITING && !this.analyseDataActive && this.checkCPSIActive) {
-      this.delay(1000).then(r =>
-        this.serialWriteMessage('AT+CPSI?')
-      );
     }
   }
 
@@ -320,5 +314,17 @@ export class HomeComponent implements OnInit {
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  register() {
+    this.serialWriteMessage(this.registerString);
+    this.delay(800).then(() =>
+      this.serialWriteMessage('AT+COPS?')
+    );
+    this.registerString = '';
+  }
+
+  createRegisterString(str: string) {
+    this.registerString = str;
   }
 }

@@ -59,12 +59,12 @@
               Verfügbare Netze
             </a>
           </li>
-          <li>
+          <!--<li>
             <a class="nav-link pointer" [ngClass]="{'active': tab === 'simInfo', 'disabled': !sim || sim.error}" (click)="tab = 'simInfo'">
               <span class="faFixedSize"><fa-icon [icon]="faSimCard"></fa-icon></span>
               SIM
             </a>
-          </li>
+          </li>-->
           <li>
             <a class="nav-link pointer" [ngClass]="{'active': tab === 'at', 'disabled': !ati}" (click)="tab = 'at'">
               <span class="faFixedSize"><fa-icon [icon]="faTerminal"></fa-icon></span>
@@ -87,19 +87,13 @@
           </div>
           <div class="col-auto pe-5">SIM:<br>
             <span class="fw-bold text-secondary" *ngIf="!sim">-</span>
-            <span class="fw-bold text-success" *ngIf="sim && !sim.error">{{sim.status}}</span>
+            <span class="fw-bold text-success" *ngIf="sim && !sim.error && sim.status === 'READY'">{{sim.status}}</span>
+            <span class="fw-bold text-warning" *ngIf="sim && !sim.error && sim.status !== 'READY'">{{sim.status}}</span>
             <span class="fw-bold text-danger" *ngIf="sim && sim.error">{{sim.status}}</span>
-          </div>
-          <div class="col-auto pe-5">Signal:<br>
-            <span class="fw-bold text-success" *ngIf="csq && csq.length >= 1 && (csq[csq.length - 1].quality === 'Excellent' || csq[csq.length - 1].quality === 'Good')">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}}
-              )</span>
-            <span class="fw-bold text-warning" *ngIf="csq && csq.length >= 1 && csq[csq.length - 1].quality === 'Ok'">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}})</span>
-            <span class="fw-bold text-danger" *ngIf="csq && csq.length >= 1 && (csq[csq.length - 1].quality === 'Bad' || csq[csq.length - 1].quality === 'Very Bad')">{{csq[csq.length - 1].dbm}} dBm ({{csq[csq.length - 1].quality}})</span>
-            <span class="fw-bold text-secondary" *ngIf="!csq || csq.length < 1">-</span>
           </div>
           <div class="col-auto pe-5">AT Status:<br>
             <span class="fw-bold text-secondary" *ngIf="atStatus === 'OK'">OK</span>
-            <span class="fw-bold text-warning" *ngIf="atStatus === 'WAITING'">Warte auf: {{lastCommand}}</span>
+            <span class="fw-bold text-warning" *ngIf="atStatus === 'WAITING'">Aktiv</span>
             <span class="fw-bold text-danger" *ngIf="atStatus === 'SYSTEM_ERROR'">Fehler</span>
           </div>
         </div>
@@ -170,10 +164,9 @@
             </div>
           </div>
         </div>
-
         <app-signal-quality-chart [values]="csq" *ngIf="netTab === 'signal'"></app-signal-quality-chart>
       </section>
-      <section *ngIf="tab === 'provider'">
+      <section *ngIf="tab === 'provider'" class="custom-height overflow-auto">
         <div class="row">
           <div class="col-auto">
             <div class="form-check form-switch">
@@ -182,7 +175,6 @@
             </div>
           </div>
         </div>
-
         <app-network [values]="cpsi" [active]="checkCPSIActive"></app-network>
       </section>
 
@@ -208,7 +200,7 @@
                   <span class="label">Code eingeben:</span><br>
                   <div class="input-group input-group-sm">
                     <input class="form-control" type="text" [(ngModel)]="selectedPIN" maxlength="4">
-                    <button class="btn btn-sm btn-success" (click)="enterPIN()">Update</button>
+                    <button class="btn btn-sm btn-success" (click)="enterPIN()">Senden</button>
                   </div>
                 </ng-container>
                 <span class="label">Status der Registrierung:</span><br>
@@ -232,7 +224,18 @@
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
-        <app-available-networks-table [values]="cops" [current]="currentCop"></app-available-networks-table>
+        <app-available-networks-table [values]="cops" [current]="currentCop" (newItemEvent)="createRegisterString($event)"></app-available-networks-table>
+        <div class="row">
+          <div class="col-md-6">
+            <ng-container *ngIf="!sim.error && sim.status === 'READY' && registerString !== ''">
+              <span class="label mt-3">Registrieren:</span><br>
+              <div class="input-group input-group-sm">
+                <input class="form-control" type="text" [value]="registerString" readonly>
+                <button class="btn btn-sm btn-success" (click)="register()">Wählen</button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
       </section>
 
       <section *ngIf="tab === 'device'">

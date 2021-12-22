@@ -36,6 +36,9 @@ export class NetworkComponent implements OnInit {
 
   dtValues: any;
   basicOptions: any;
+  noServiceOptions: any;
+
+  tab: any;
 
   colsLTE = [
     {field: 'date', header: 'Datum'},
@@ -98,6 +101,8 @@ export class NetworkComponent implements OnInit {
     this.valuesWCDMA = [];
     this.valuesNoService = [];
 
+    this.tab = 'chart';
+
     this.basicOptions = {
       animation: {
         duration: 0
@@ -121,6 +126,40 @@ export class NetworkComponent implements OnInit {
         },
         y: {
           grace: '50%',
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        }
+      }
+    };
+
+    this.noServiceOptions = {
+      animation: {
+        duration: 0
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#495057'
+          }
+        }
+      },
+      responsive: true,
+      scales: {
+        x: {
+          ticks: {
+            color: '#495057'
+          },
+          grid: {
+            color: '#ebedef'
+          }
+        },
+        y: {
+          min: '0',
+          max: '1.1',
           ticks: {
             color: '#495057'
           },
@@ -213,7 +252,7 @@ export class NetworkComponent implements OnInit {
         labels: this.values.map((a, index) => index).slice(-50),
         datasets: [
           {
-            label: 'RxLev (RX level value for base station selection)',
+            label: 'Ja/Nein',
             data: this.values.map(a => this.normalizeToZero(0, a.systemMode, a.systemMode.includes('NO SERVICE'))).slice(-50),
             fill: false,
             borderColor: '#ff0000',
@@ -221,16 +260,17 @@ export class NetworkComponent implements OnInit {
           }
         ]
       };
-
-      this.chartLTE.refresh();
-      this.chartGSM.refresh();
-      this.chartWCDMA.refresh();
-      this.chartNo.refresh();
+      if (this.tab === 'chart') {
+        this.chartLTE.refresh();
+        this.chartGSM.refresh();
+        this.chartWCDMA.refresh();
+        this.chartNo.refresh();
+      }
     }
   }
 
   private normalizeToZero(input: any, mode: string, isRelevant: boolean) {
-    if(input == null && !mode.includes('NO SERVICE')) {
+    if (input == null && !mode.includes('NO SERVICE')) {
       return 0;
     } else if (mode.includes('NO SERVICE')) {
       return 1;

@@ -8,7 +8,7 @@ export class CPSINOSERVICE extends CPSI {
       if (rawItem.data.includes('+CPSI:')) {
         const split = rawItem.data.replace('+CPSI: ', '').trim().split(',');
         if (split.length > 1) {
-          this.systemMode = split[0].trim();
+          this.systemMode = split[0].trim().toUpperCase();
           this.operationMode = split[1].trim();
           this.date = new Date();
         }

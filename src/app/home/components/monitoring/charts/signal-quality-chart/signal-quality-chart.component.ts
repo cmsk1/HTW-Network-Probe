@@ -30,12 +30,10 @@ export class SignalQualityChartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     setInterval(() => {
       this.reInitChart();
       this.dtValues = [...this.values];
     }, 1000);
-
   }
 
   reInitChart() {

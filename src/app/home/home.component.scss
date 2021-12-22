@@ -1,16 +1,18 @@
 body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
+  overflow-y: hidden;
 }
 
 html {
   height: -webkit-fill-available;
+  overflow-y: hidden;
 }
 
 main {
-  height: 100vh;
+  height: calc(100vh - 60px);
   height: -webkit-fill-available;
-  max-height: 100vh;
+  max-height: calc(100vh - 60px);
   overflow-x: auto;
   overflow-y: hidden;
 }

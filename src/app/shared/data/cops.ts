@@ -9,7 +9,6 @@ export class COPS {
   constructor(raw: RawData[]) {
     this.current = null;
     this.networks = [];
-    console.log(raw);
     for (const rawItem of raw) {
       if (rawItem.data.includes('+COPS:')) {
         this.info = rawItem.data.replace('+COPS: ', '').trim();

@@ -1,135 +1,145 @@
-<div class="overflow-auto custom-height">
-<div class="row">
-  <div class="col-md-6 mb-3">
-    <div class="p-3">
-      <h4>LTE:</h4>
-      <p-chart #chartLTE type="line" [data]="dataLTE" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
-    </div>
-  </div>
-  <div class="col-md-6 mb-3">
-    <div class="p-3">
-      <h4>GSM:</h4>
-      <p-chart #chartGSM type="line" [data]="dataGSM" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
-    </div>
-  </div>
-  <div class="col-md-6 mb-3">
-    <div class="p-3">
-      <h4>WCDMA:</h4>
-      <p-chart #chartWCDMA type="line" [data]="dataWCDMA" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
-    </div>
-  </div>
-  <div class="col-md-6 mb-3">
-    <div class="p-3">
-      <h4>Kein Service:</h4>
-      <p-chart #chartNo type="line" [data]="dataNoService" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
-    </div>
-  </div>
-</div>
-<hr>
-<div class="p-3">
-  <h4>LTE Daten:</h4>
-  <p-table #dtLTE [columns]="colsLTE" [value]="valuesLTE" [scrollable]="true" [rows]="100" scrollHeight="250px"
-           [virtualScroll]="true" [virtualRowHeight]="40">
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex">
-        <button type="button" pButton pRipple icon="pi pi-file" (click)="dtLTE.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+<ul class="nav nav-tabs my-3">
+  <li class="nav-item">
+    <a class="nav-link" [ngClass]="{'active': tab === 'chart'}" (click)="tab = 'chart'">Übersicht</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" [ngClass]="{'active': tab === 'data'}" (click)="tab = 'data'">Alle Daten</a>
+  </li>
+</ul>
+<ng-container *ngIf="tab === 'chart'">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <div class="p-3">
+        <h4>LTE:</h4>
+        <p-chart #chartLTE type="line" [data]="dataLTE" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
       </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{col.header}}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
-      <tr style="height:40px">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
-          <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="p-3">
+        <h4>GSM:</h4>
+        <p-chart #chartGSM type="line" [data]="dataGSM" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="p-3">
+        <h4>WCDMA:</h4>
+        <p-chart #chartWCDMA type="line" [data]="dataWCDMA" [options]="basicOptions" [height]="'250px'" *ngIf="values"></p-chart>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="p-3">
+        <h4>Kein Service:</h4>
+        <p-chart #chartNo type="line" [data]="dataNoService" [options]="noServiceOptions" [height]="'250px'" *ngIf="values"></p-chart>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="tab === 'data'">
+  <div class="p-3" *ngIf="valuesLTE && valuesLTE.length > 0">
+    <h4>LTE Daten:</h4>
+    <p-table #dtLTE [columns]="colsLTE" [value]="valuesLTE" [scrollable]="true" [rows]="100" scrollHeight="250px"
+             [virtualScroll]="true" [virtualRowHeight]="40">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex">
+          <button type="button" pButton pRipple icon="pi pi-file" (click)="dtLTE.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+        <tr style="height:40px">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
+            <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 
-<div class="p-3">
-  <h4>WCDMA Daten:</h4>
-  <p-table #dtWCDMA [columns]="colsWCDMA" [value]="valuesWCDMA" [scrollable]="true" [rows]="100" scrollHeight="250px"
-           [virtualScroll]="true" [virtualRowHeight]="40">
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex">
-        <button type="button" pButton pRipple icon="pi pi-file" (click)="dtWCDMA.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{col.header}}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
-      <tr style="height:40px">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
-          <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+  <div class="p-3" *ngIf="valuesWCDMA && valuesWCDMA.length > 0">
+    <h4>WCDMA Daten:</h4>
+    <p-table #dtWCDMA [columns]="colsWCDMA" [value]="valuesWCDMA" [scrollable]="true" [rows]="100" scrollHeight="250px"
+             [virtualScroll]="true" [virtualRowHeight]="40">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex">
+          <button type="button" pButton pRipple icon="pi pi-file" (click)="dtWCDMA.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+        <tr style="height:40px">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
+            <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 
-<div class="p-3">
-  <h4>GSM Daten:</h4>
-  <p-table #dtGSM [columns]="colsGSM" [value]="valuesGSM" [scrollable]="true" [rows]="100" scrollHeight="250px"
-           [virtualScroll]="true" [virtualRowHeight]="40">
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex">
-        <button type="button" pButton pRipple icon="pi pi-file" (click)="dtGSM.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{col.header}}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
-      <tr style="height:40px">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
-          <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+  <div class="p-3" *ngIf="valuesGSM && valuesGSM.length > 0">
+    <h4>GSM Daten:</h4>
+    <p-table #dtGSM [columns]="colsGSM" [value]="valuesGSM" [scrollable]="true" [rows]="100" scrollHeight="250px"
+             [virtualScroll]="true" [virtualRowHeight]="40">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex">
+          <button type="button" pButton pRipple icon="pi pi-file" (click)="dtGSM.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+        <tr style="height:40px">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
+            <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 
-<div class="p-3">
-  <h4>WCDMA Daten:</h4>
-  <p-table #dtNo [columns]="colsNo" [value]="valuesNoService" [scrollable]="true" [rows]="100" scrollHeight="250px"
-           [virtualScroll]="true" [virtualRowHeight]="40">
-    <ng-template pTemplate="caption">
-      <div class="p-d-flex">
-        <button type="button" pButton pRipple icon="pi pi-file" (click)="dtNo.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{col.header}}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
-      <tr style="height:40px">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
-          <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+  <div class="p-3" *ngIf="valuesNoService && valuesNoService.length > 0">
+    <h4>Kein Service:</h4>
+    <p-table #dtNo [columns]="colsNo" [value]="valuesNoService" [scrollable]="true" [rows]="100" scrollHeight="250px"
+             [virtualScroll]="true" [virtualRowHeight]="40">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex">
+          <button type="button" pButton pRipple icon="pi pi-file" (click)="dtNo.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #dt pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+        <tr style="height:40px">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.field === 'date'">{{rowData[col.field] |date:'dd.MM.yyy HH:mm:ss'}}</ng-container>
+            <ng-container *ngIf="col.field !== 'date'">{{rowData[col.field]}}</ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</ng-container>

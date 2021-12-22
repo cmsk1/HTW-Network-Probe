@@ -31,3 +31,10 @@
   cursor: pointer;
   filter: brightness(65%);
 }
+
+.custom-height {
+  height: 100%;
+  height: -webkit-calc(100vh - 120px);
+  height: -moz-calc(100vh - 120px);
+  height: calc(100vh - 120px);
+}

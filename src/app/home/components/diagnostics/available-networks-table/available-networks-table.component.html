@@ -14,7 +14,7 @@
         <span class="d-block" *ngIf="current.stat === 1">Available</span>
         <span class="d-block" *ngIf="current.stat === 2">Current</span>
         <span class="d-block" *ngIf="current.stat === 3">Forbidden</span>
-        <span  class="label">Technologie:</span><br>
+        <span class="label">Technologie:</span><br>
         <span class="d-block" *ngIf="current.technology === 0">GSM</span>
         <span class="d-block" *ngIf="current.technology === 1">GSM Compact</span>
         <span class="d-block" *ngIf="current.technology === 2">UTRAN</span>
@@ -50,6 +50,7 @@
     <td>{{val.id}}</td>
     <td>{{val.name}}</td>
     <td>{{val.operator}}</td>
+    <td>Select</td>
     <td>
       <span *ngIf="val.stat === 0">0 - unknown</span>
       <span *ngIf="val.stat === 1">1 - available</span>
@@ -66,6 +67,9 @@
       <span *ngIf="val.technology === 6">6 - UTRAN w/HSDPA and HSUPA</span>
       <span *ngIf="val.technology === 7">7 - EUTRAN</span>
       <span *ngIf="val.technology === 8">8 - UTRAN HSPA+</span>
+    </td>
+    <td>
+      <button class="btn btn-sm btn-primary" (click)="prepareRegister(val)" *ngIf="val.stat === 1">Select</button>
     </td>
   </tr>
   </tbody>
