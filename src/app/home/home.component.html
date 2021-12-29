@@ -183,7 +183,7 @@
           <button class="btn btn-sm btn-primary" (click)="serialWriteMessage('AT+CPIN?')" [disabled]="atStatus !== 'OK'">SIM Prüfen</button>
         </div>
         <ng-container *ngIf="sim">
-          <div class="col-md-6">
+          <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">SIM-Karte:&emsp;</h5>
@@ -210,6 +210,46 @@
                 <span class="d-block fw-bold text-danger" *ngIf="cgreg && cgreg.status === 3">Registrierung abgelehnt!</span>
                 <span class="d-block fw-bold text-danger" *ngIf="cgreg && cgreg.status === 4">Unbekannt.</span>
                 <span class="d-block fw-bold text-success" *ngIf="cgreg && cgreg.status === 5">Registriert (Roaming).</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Identifikation:&emsp;</h5>
+                <span class="label">SIM ID:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="serialWriteMessage('AT+CICCID')"></fa-icon></span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="ciccid">{{ciccid.id}}</span>
+
+                <span class="label">IMSI:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="serialWriteMessage('AT+CIMI')"></fa-icon></span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="cimi && cimi.imsi">{{cimi.imsi}}</span>
+                <span class="label">Ländercode:</span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="cimi && cimi.mcc">{{cimi.mcc}}</span>
+                <span class="label">Mobilfunknetzkennzahl:</span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="cimi && cimi.mnc">{{cimi.mnc}}</span>
+                <span class="label">Teilnehmeridentifikation:</span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="cimi && cimi.mnc">{{cimi.msin}}</span>
+                <span class="label" *ngIf="cimi && cimi.operatorATDE">Netzbetreiber:</span><br>
+                <span class="d-block fw-bold text-secondary" *ngIf="cimi && cimi.operatorATDE">{{cimi.operatorATDE}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Versuche bis zur Sperrung:&emsp;<fa-icon [icon]="faSync" class="text-success cs-btn-hover-grow-effect" *ngIf="atStatus === 'OK'" (click)="serialWriteMessage('AT+SPIC')"></fa-icon>
+                </h5>
+                <span class="d-block text-secondary" *ngIf="spic">PIN: <b>{{spic.remainingPIN}}</b></span>
+                <span class="d-block text-secondary" *ngIf="spic">PIN 2: <b>{{spic.remainingPIN2}}</b></span>
+                <span class="d-block text-secondary" *ngIf="spic">PUK: <b>{{spic.remainingPUK}}</b></span>
+                <span class="d-block text-secondary" *ngIf="spic">PUK 2: <b>{{spic.remainingPUK2}}</b></span>
               </div>
             </div>
           </div>

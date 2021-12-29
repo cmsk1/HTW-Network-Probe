@@ -32,6 +32,9 @@ import {CPSIGSM} from '../shared/data/cpsi-gsm';
 import {CPSILTE} from '../shared/data/cpsi-lte';
 import {CPSIWCDMA} from '../shared/data/cpsi-wcdma';
 import {CPSINOSERVICE} from '../shared/data/cpsi-noservice';
+import {SPIC} from '../shared/data/spic';
+import {CIMI} from '../shared/data/cimi';
+import {CICCID} from '../shared/data/ciccid';
 
 @Component({
   selector: 'app-home',
@@ -78,8 +81,11 @@ export class HomeComponent implements OnInit {
   sim: Sim;
   cbc: Cbc;
   temp: Temp;
+  spic: SPIC;
+  cimi: CIMI;
   cops: COPS;
   cfun: CFUN;
+  ciccid: CICCID;
   cgreg: CGREG;
   currentCop: COPSC;
   csq: CSQ[];
@@ -156,6 +162,9 @@ export class HomeComponent implements OnInit {
     this.checkCSQActive = false;
     this.ati = null;
     this.sim = null;
+    this.spic = null;
+    this.cimi = null;
+    this.ciccid = null;
   }
 
   getAllPorts() {
@@ -232,7 +241,7 @@ export class HomeComponent implements OnInit {
     if (this.lastCommand === 'AT+CPIN?') {
       this.sim = new Sim(this.analyseData);
       if (this.sim.status === 'READY') {
-        this.delay(2000).then(() =>
+        this.delay(1000).then(() =>
           this.serialWriteMessage('AT+CGREG?')
         );
       }
@@ -254,6 +263,15 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'AT+CFUN?') {
       this.cfun = new CFUN(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+SPIC') {
+      this.spic = new SPIC(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+CIMI') {
+      this.cimi = new CIMI(this.analyseData);
+    }
+    if (this.lastCommand === 'AT+CICCID') {
+      this.ciccid = new CICCID(this.analyseData);
     }
     if (this.lastCommand === 'AT+CPSI?') {
       const split = this.analyseData[0].data.replace('+CPSI: ', '').trim().split(',');
@@ -277,6 +295,7 @@ export class HomeComponent implements OnInit {
     }
     if (this.lastCommand === 'AT+CGREG?') {
       this.cgreg = new CGREG(this.analyseData);
+      this.serialWriteMessage('AT+SPIC');
     }
     if (this.lastCommand === 'AT+COPS?' && this.cops) {
       if (this.analyseData[0].data.toString().trim() !== '+COPS: 0') {
