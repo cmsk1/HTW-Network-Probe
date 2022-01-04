@@ -46,7 +46,7 @@ export class NetworkComponent implements OnInit {
     {field: 'operationMode', header: 'Status'},
     {field: 'mccMnc', header: 'MCC-MNC'},
     {field: 'tac', header: 'TAC'},
-    {field: 'sCellID', header: 'Ser. Cell ID'},
+    {field: 'sCellID', header: 'Cell ID'},
     {field: 'pCellID', header: 'Phy. Cell ID'},
     {field: 'frequencyBand', header: 'Frequency Band'},
     {field: 'earfcn', header: 'E-UTRA Nr.'},
@@ -66,7 +66,7 @@ export class NetworkComponent implements OnInit {
     {field: 'lac', header: 'LAC'},
     {field: 'cellID', header: 'Cell ID'},
     {field: 'absoluteRFChNr', header: 'AFRCN'},
-    {field: 'rxLev', header: 'Cell ID'},
+    {field: 'rxLev', header: 'RX Level'},
     {field: 'trackLoAdjust', header: 'Track LO Adjust'},
     {field: 'c1c2', header: 'C1-C2'}
   ];
@@ -78,7 +78,7 @@ export class NetworkComponent implements OnInit {
     {field: 'mccMnc', header: 'MCC-MNC'},
     {field: 'lac', header: 'LAC'},
     {field: 'cellID', header: 'Cell ID'},
-    {field: 'frequencyBand', header: 'AFRCN'},
+    {field: 'frequencyBand', header: 'Frequency Band'},
     {field: 'psc', header: 'PSC'},
     {field: 'freq', header: 'DL Frequency'},
     {field: 'ssc', header: 'SSC'},
